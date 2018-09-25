@@ -1,119 +1,124 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
-/////////////////////////////////////////////
-/////////////// RouletteApp /////////////////
-/////////////////////////////////////////////
+// （1）モジュールのインポート
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Avatar from 'material-ui/Avatar';
+import Chip from 'material-ui/Chip';
+import RaisedButton from '@material-ui/core/Button';
+import blue from '@material-ui/core/colors/blue';
+//import injectTapEventPlugin from 'react-tap-event-plugin';
 
-// Reactコンポーネントの宣言
-class Roulette extends React.Component {
-  constructor(props) { 
-    super(props);
-    this.state = { number: 1,
-            isStart: false};
-    this.toggleButton2 = this.toggleButton.bind(this);  // （1）
-  }
+import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
-  // state.numberを更新するメソッド
-  shuffle(){
-    var rand = Math.floor(Math.random() * 30) + 1;
-    this.setState({number: rand});
-  }
+// （2）タッチイベントに必要なコード
+//    http://stackoverflow.com/a/34015469/988941
+//injectTapEventPlugin();
 
-  // ルーレットを開始するメソッド
-  startRoulette(){
-    this.interval = setInterval(() => this.shuffle(), 50);
-  }
-
-  // ルーレットを停止するメソッド
-  stopRoulette(){
-    clearInterval(this.interval);
-  }
-
-  // ルーレット開始、または停止とイベントに合わせてボタンのラベルを切り替える
-  toggleButton(){
-    if(this.state.isStart){
-      this.stopRoulette();
-    } else {
-      this.startRoulette();
-    }
-
-    this.setState((prevState) => ({
-        isStart : !prevState.isStart
-    }));
-  }
-
-  // buttonのonClickイベントにtoggleButtonをバインド
-  // Reactコンポーネントを返す
-  render() {
-    return (
-      <div>
-        <p>number : {this.state.number}</p>
-        <button onClick={this.toggleButton2}>
-          {this.state.isStart ? 'Stop' : 'Start'}
-        </button>
-      </div>
-    );
-  }
+class MyButton extends React.Component {
+	render() {
+		return(
+			<MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
+				<RaisedButton label="MyButton" />
+			</MuiThemeProvider>
+		);
+	}
 }
 
-// DomにReact要素を挿入
+// カスタマイズしたい項目の設定
+const muiTheme = getMuiTheme({
+	palette: {
+		primary1Color: blue[500],
+	},
+	RaisedButton: {
+		width: 80,
+	},
+});
+  
+// PropsとしてmuiThemeオブジェクトを設定
+const Main = () => (
+	<MuiThemeProvider muiTheme={muiTheme}>
+	  <RaisedButton label="My Button" />
+	</MuiThemeProvider>
+  );
+
+const styles = {
+	chip: {
+		margin: 5,
+	},
+	wrapper: {
+		display: 'flex',
+		flexWrap: 'wrap',
+	},
+};
+
+// （3）タップイベントのハンドラ
+function handleTouchDelete() {
+	alert('削除ボタンが押されました');
+}
+
+function handleTouchTap() {
+	alert('チップが選択されました。');
+}
+
+// （4）Material-UIのコンポーネントの宣言
+class MyChipSmaple extends React.Component {
+	render() {
+		return (
+			<MuiThemeProvider>
+				<div style={styles.wrapper}>
+					<Chip
+						onRequestDelete={handleTouchDelete}
+						onTouchTap={handleTouchTap}
+						style={styles.chip} >
+						<Avatar size={32}>TS</Avatar>
+						Taro Sakurai
+					</Chip>
+
+					<Chip
+						onRequestDelete={handleTouchDelete}
+						onTouchTap={handleTouchTap}
+						style={styles.chip} >
+						<Avatar size={32}>JT</Avatar>
+						Jiro Tanaka
+					</Chip>
+
+					<Chip
+						onRequestDelete={handleTouchDelete}
+						onTouchTap={handleTouchTap}
+						style={styles.chip} >
+						<Avatar size={32}>SB</Avatar>
+						Saburo Suzuki
+					</Chip>
+
+					<Chip
+						onRequestDelete={handleTouchDelete}
+						onTouchTap={handleTouchTap}
+						style={styles.chip} >
+						<Avatar size={32}>SA</Avatar>
+						Shiro Akasaka
+					</Chip>
+
+					<Chip
+						onRequestDelete={handleTouchDelete}
+						onTouchTap={handleTouchTap}
+						style={styles.chip} >
+						<Avatar size={32}>GN</Avatar>
+						Goro Noda
+					</Chip>
+				</div>
+
+			</MuiThemeProvider>
+		);
+	}
+}
+
 ReactDOM.render(
-  <Roulette />,
-  document.getElementById('root')
-)
-
-/////////////////////////////////////////////
-///////////////  TimerApp  //////////////////
-/////////////////////////////////////////////
-
-// // Reactコンポーネントクラス「Timer」を宣言
-// class Timer extends React.Component {
-// 	constructor(props) {                                    // （4）
-// 		super(props);
-// 		this.state = {remaining : this.props.seconds};      // （2）
-// 	}
-
-// 	// state.remainingが正の数なら1秒減じる関数
-// 	countDown() {
-// 		if(this.state.remaining > 0) {
-// 				this.setState((prevState) => ({
-// 					remaining : prevState.remaining - 1       // （3）
-// 			}));
-// 		 }
-// 	}
-
-// 	// 初期化時に、countDownメソッドを1秒ごとに呼び出すタイマーを設定
-// 	componentDidMount() {                                     // （5）
-// 		this.interval = setInterval(() => this.countDown(), 1000);
-// 	}
-
-// 	// 終了処理として、タイマーをクリアする
-// 	componentWillUnmount() {                                  // （6）
-// 		clearInterval(this.interval);
-// 	}
-
-// 	// Timerコンポーネントが描画する要素を記述
-// 	render() {
-// 		return (
-// 			<div>
-// 				<h1>Hello, {this.props.name}!</h1>
-// 				<h2>{this.state.remaining} seconds remaining.</h2>
-// 			</div>
-// 		);
-// 	}
-// }
-
-// // Propsを通してnameとsecondsを渡して、Timerコンポーネントを生成
-// const element = <Timer name="Filange" seconds={180} />;       // （1）
-
-// // index.htmlのid=‘root’をもつ要素にelementを挿入
-// ReactDOM.render(
-// 	element,
-// 	document.getElementById('root')
-// );
+	<MyChipSmaple />,
+	document.getElementById('root')
+);
 
 registerServiceWorker();
